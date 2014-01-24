@@ -2,6 +2,8 @@ package org.residualvm.residualvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -18,11 +20,101 @@ import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import org.residualvm.residualvm.R;
+import org.residualvm.residualvm.HelpFragment;
+
 import tv.ouya.console.api.OuyaController;
 
 import java.io.File;
 
 public class ResidualVMActivity extends Activity {
+
+	private boolean isBtnsShowing = false;
+	private boolean isHelpFragmentShowing = false;
+	private HelpFragment mHelpFragment;
+
+	public View.OnClickListener helpBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+
+	        	if(isHelpFragmentShowing && mHelpFragment != null) {
+
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+			        ft.remove(mHelpFragment);
+			        ft.commit();
+
+			        isHelpFragmentShowing = false;
+					
+				} else {
+
+		        	Fragment newFragment = HelpFragment.newInstance();
+		            FragmentTransaction ft = getFragmentManager().beginTransaction();
+		            ft.add(android.R.id.content, newFragment);
+		            ft.commit();
+
+		            mHelpFragment = (HelpFragment) newFragment;
+		            isHelpFragmentShowing = true;
+
+	        	}
+
+	        }
+
+	    };
+
+	public View.OnClickListener optionsBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+
+				if(!isBtnsShowing)
+			        ((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.VISIBLE);
+				else
+				    ((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.GONE);
+
+				    isBtnsShowing = !isBtnsShowing;
+
+			        }
+	    };
+
+	private void emulateKeyPress(int keyCode){
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, keyCode, 0, 0, 0, 0);
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, keyCode, 0, 0, 0, 0);
+	}
+
+	public View.OnClickListener menuBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+	        	emulateKeyPress(KeyEvent.KEYCODE_F1);
+	        }
+	    };
+
+	public View.OnClickListener inventoryBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+	        	emulateKeyPress(KeyEvent.KEYCODE_I);
+	        }
+	    };
+
+	public View.OnClickListener lookAtBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+	        	emulateKeyPress(KeyEvent.KEYCODE_E);
+	        }
+	    };
+
+	public View.OnClickListener useBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+	        	emulateKeyPress(KeyEvent.KEYCODE_ENTER);
+	        }
+	    };
+
+	public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener() {
+	        @Override
+	        public void onClick(View v) {
+	        	emulateKeyPress(KeyEvent.KEYCODE_P);
+	        }
+	    };
+
 
 	private class MyResidualVM extends ResidualVM {
 		private boolean usingSmallScreen() {
@@ -160,19 +252,28 @@ public class ResidualVMActivity extends Activity {
 
 		_events = new ResidualVMEvents(this, _residualvm);
 
+		// On screen buttons listeners
+		((ImageView)findViewById(R.id.options)).setOnClickListener(optionsBtnOnClickListener);
+		((ImageView)findViewById(R.id.help)).setOnClickListener(helpBtnOnClickListener);
+		((Button)findViewById(R.id.menu_btn)).setOnClickListener(menuBtnOnClickListener);
+		((Button)findViewById(R.id.inventory_btn)).setOnClickListener(inventoryBtnOnClickListener);
+		((Button)findViewById(R.id.use_btn)).setOnClickListener(useBtnOnClickListener);
+		((Button)findViewById(R.id.pick_up_btn)).setOnClickListener(pickUpBtnOnClickListener);
+		((Button)findViewById(R.id.look_at_btn)).setOnClickListener(lookAtBtnOnClickListener);
+
 		main_surface.setOnKeyListener(_events);
 		main_surface.setOnGenericMotionListener(_events);
 
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.game_menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
