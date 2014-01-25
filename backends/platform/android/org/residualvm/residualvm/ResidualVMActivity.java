@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -19,6 +20,10 @@ import android.view.SurfaceHolder;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.Button;
+
 
 import org.residualvm.residualvm.R;
 import org.residualvm.residualvm.HelpFragment;
