@@ -22,9 +22,8 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/layout/help_fragment.xml \
 	$(PATH_BUILD_RES)/layout/splash.xml \
 	$(PATH_BUILD_RES)/drawable/gradient.xml \
+	$(PATH_BUILD_RES)/drawable/border.xml \
 	$(PATH_BUILD_RES)/drawable/residualvm.png \
-	$(PATH_BUILD_RES)/drawable/residualvm_big.png \
-	$(PATH_BUILD_RES)/drawable-mdpi/residualvm_big.png \
 	$(PATH_BUILD_RES)/drawable/residualvm_big.png \
 	$(PATH_BUILD_RES)/drawable-hdpi/ic_action_settings.png \
 	$(PATH_BUILD_RES)/drawable-hdpi/ic_action_help.png \
